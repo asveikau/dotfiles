@@ -1,0 +1,6 @@
+xterm*scrollBar: off
+xterm*Foreground: wheat
+xterm*Background: #0a0a0a
+!xterm*FaceName: Glass TTY VT220:pixelsize=36
+xterm*FaceName: consolas mono:pixelsize=24
+Xft.dpi: 215

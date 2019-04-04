@@ -1,0 +1,119 @@
+set realname="Andrew Šveikauskas"
+
+set pgp_use_gpg_agent = yes
+set pgp_decode_command="gpg %?p? --no-verbose --batch --output - %f"
+set pgp_verify_command="gpg --no-verbose --batch --output - --verify %s %f"
+set pgp_decrypt_command="gpg --status-fd=2 --no-verbose --batch --output - %f"
+set pgp_sign_command="gpg --no-verbose --batch --output -  --armor --detach-sign --textmode %?a?-u %a? %f"
+set pgp_clearsign_command="gpg --no-verbose --batch --output -  --armor --textmode --clearsign %?a?-u %a? %f"
+set pgp_encrypt_only_command="pgpewrap gpg --batch --quiet --no-verbose --output - --encrypt --textmode --armor --always-trust -- -r %r -- %f"
+set pgp_encrypt_sign_command="pgpewrap gpg  --batch --quiet --no-verbose --textmode --output - --encrypt --sign %?a?-u %a? --armor --always-trust -- -r %r -- %f"
+set pgp_import_command="gpg --no-verbose --import -v %f"
+set pgp_export_command="gpg --no-verbose --export --armor %r"
+set pgp_verify_key_command="gpg --no-verbose --batch --fingerprint --check-sigs %r"
+set pgp_list_pubring_command="gpg --no-verbose --batch --with-colons --list-keys %r" 
+set pgp_list_secring_command="gpg --no-verbose --batch --with-colons --list-secret-keys %r" 
+set pgp_sign_as=0x38AF8E32
+
+source "gpg -d ~/.mutt/secrets.gpg |"
+
+# These are the same colors Debian has in /etc/Muttrc.d/colors.rc.
+color normal     white black
+color attachment brightyellow black
+color hdrdefault cyan black
+color indicator  black cyan
+color markers    brightred black
+color quoted     green black
+color signature  cyan black
+color status     brightgreen blue
+color tilde      blue black
+color tree       red black
+
+set index_format="%4C│%_{%b %d}│%_S│%15.15_n│%_s"
+
+# No plus signs in messages
+set markers = no 
+# No "old" unread messages
+set nomark_old
+
+# Show a few lines of folder contents when in a message
+set pager_index_lines = 5
+
+# Don't go to next message when scrolling past in pager
+set pager_stop = yes
+
+# Threaded view by default
+set sort=threads
+
+# Put threads with recent replies on top
+set sort_aux=last-date-received
+
+# Don't move from spoolfile to mbox
+set move=no
+
+# Only show filename in folder browser
+set folder_format="   %f"
+
+# Cache headers for speedy directory listings
+#set header_cache=~/.mutt/header-cache
+set header_cache=/tmp/andy/mutt-header-cache
+
+# And cache message contents
+#set message_cachedir=~/.mutt/message-cache
+set message_cachedir=/tmp/andy/mutt-message-cache
+
+# Quote the original in replies
+set include=yes
+
+# Respect Reply-To
+set reply_to=yes
+
+# Use "big-R" to reply-all
+bind index,pager R group-reply
+
+# Make "c" show the folder browser (similar to "y")
+macro index c "<change-folder>?<toggle-mailboxes>" "open a different folder"
+macro pager c "<change-folder>?<toggle-mailboxes>" "open a different folder"
+
+# Only display headers I find interesting
+ignore *
+unignore To From Cc Subject Date Reply-To Organization X-Mailer User-Agent
+hdr_order To: From: Date: Subject: Cc:
+
+# Mailcap
+set mailcap_path=~/.mutt/mailcap
+auto_view text/html
+
+# Some sane server settings...
+set ssl_force_tls=yes
+#set imap_idle=yes
+set imap_check_subscribed=yes
+set pop_delete=no
+
+##
+## MAILBOXES ETC.
+##
+
+# Local mail...
+set mbox_type=Maildir
+set folder="~/Maildir"
+set mbox="+.Saved"
+set record="+.Sent"
+set postponed="+.Drafts"
+mailboxes +.Saved +.Sent +.Drafts
+
+# Gmail...
+account-hook imaps://imap.gmail.com \
+   set imap_user=a.l.sveikauskas@gmail.com imap_pass=$my_gmail_password
+folder-hook imaps://imap.gmail.com \
+   set from=a.l.sveikauskas@gmail.com \
+       folder=imaps://imap.gmail.com/ \
+       smtp_url=smtps://a.l.sveikauskas@gmail.com:$my_gmail_password@smtp.gmail.com:465
+set folder=imaps://imap.gmail.com/
+mailboxes =INBOX 
+
+# Don't open any folder by default.
+unset folder
+
+# Send mail via gmail...
+set smtp_url=smtps://a.l.sveikauskas@gmail.com:$my_gmail_password@smtp.gmail.com:465

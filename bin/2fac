@@ -1,0 +1,2 @@
+#!/bin/sh
+oathtool --totp -b "`gpg -d $1 2>/dev/null`"

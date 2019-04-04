@@ -1,0 +1,9 @@
+(
+  Applications,
+  (xterm, EXEC, xterm),
+  (web, EXEC, firefox),
+  (sublime, EXEC, sublime),
+  (lock, EXEC, "xscreensaver-command -lock"),
+  (restart, RESTART),
+  (exit, EXIT)
+)
