@@ -40,7 +40,7 @@ if [ "`which gpg-agent`" != "" ]; then
    #
    AGENT_PID="`pgrep -u $(id -u) gpg-agent`"
    if [ "$AGENT_PID" != "" ]; then
-      AGENT_DISPLAY="`gpg-connect-agent 'getinfo std_session_env' /bye 2>/dev/null | grep -a '^D DISPLAY=' | cut -d = -f 2- | tr -d '\0'`"
+      AGENT_DISPLAY="`gpg-connect-agent 'getinfo std_startup_env' /bye 2>/dev/null | grep -a '^D DISPLAY=' | cut -d = -f 2- | tr -d '\0'`"
       if [ "$AGENT_DISPLAY" != "$DISPLAY" ]; then
          gpgconf --kill gpg-agent
          unset AGENT_PID
