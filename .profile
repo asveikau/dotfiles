@@ -44,7 +44,7 @@ if [ "`which gpg-agent`" != "" ]; then
       if [ "$AGENT_DISPLAY" != "$DISPLAY" ]; then
          gpgconf --kill gpg-agent
          unset AGENT_PID
-         if [ "`grep -u $(id -u) gpg-agent`" != "" ]; then
+         if [ "`pgrep -u $(id -u) gpg-agent`" != "" ]; then
             sleep 0.3
             pkill -9 -u `id -u` gpg-agent
          fi
