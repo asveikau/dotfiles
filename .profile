@@ -10,6 +10,15 @@ export GIT_AUTHOR_EMAIL="a.l.sveikauskas@gmail.com"
 export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
 export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
 
+# XXX - Ugly hack for amd(8) and /home.
+# getwd(2) is showing the staging area instead of ~
+#
+case `pwd` in
+/tmp_mnt/*)
+   cd
+   ;;
+esac
+
 os=`uname -s|tr '[:upper:]' '[:lower:]'`
 platform=`uname -sm|tr '[:upper:]' '[:lower:]' | sed -e s/' '/_/g -e s/x86_64/amd64/`
 
