@@ -50,6 +50,11 @@ if [ "`which gpg-agent`" != "" ]; then
    AGENT_PID="`pgrep -u $(id -u) gpg-agent`"
    if [ "$AGENT_PID" != "" ]; then
       AGENT_DISPLAY="`gpg-connect-agent 'getinfo std_startup_env' /bye 2>/dev/null | grep -a '^D DISPLAY=' | cut -d = -f 2- | tr -d '\0'`"
+
+      ## XXX - previously was experimenting with killing based on number of
+      ## cached keys, which is useful, but slow.
+      #CACHED_COUNT="`gpg-connect-agent 'keyinfo --list' /bye|grep -c '1 P'`"
+
       if [ "$AGENT_DISPLAY" != "$DISPLAY" ]; then
          gpgconf --kill gpg-agent
          unset AGENT_PID
@@ -65,20 +70,9 @@ if [ "`which gpg-agent`" != "" ]; then
       SSHFLAGS=--enable-ssh-support
    fi
    if [ "$AGENT_PID" = "" ]; then
-      PINENTRY=`(which pinentry-gtk-2; ls /Applications/MacPorts/pinentry-mac.app/Contents/MacOS/pinentry-mac; which pinentry) 2>/dev/null | head -n 1`
-
-      if [ -x $PINENTRY ]; then
-         PINENTRY="--pinentry-program $PINENTRY"
-      else
-         unset PINENTRY
-      fi
-
       gpg-agent --daemon \
                 $SSHFLAGS \
-                $PINENTRY \
          > /dev/null
-
-      unset PINENTRY
    fi
    unset AGENT_PID
    if [ "$SSHFLAGS" != "" ]; then
