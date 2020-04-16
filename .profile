@@ -30,10 +30,6 @@ PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 
 export PATH=$HOME/bin/`hostname -s`:$HOME/bin:$HOME/bin/$os:$HOME/bin/$platform:$PATH
 
-if [ "$os" = "openbsd" ]; then
-   export PKG_PATH=http://mirrors.sonic.net/pub/OpenBSD/`uname -r`/packages/`machine -a`/
-fi
-
 if [ "$platform" = "darwin" ]; then
    rm -f /var/log/asl/*`id -u`.asl 2>/dev/null
 fi
