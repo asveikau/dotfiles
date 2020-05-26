@@ -1,11 +1,21 @@
+bgcolor='#333340'
+if [ "`which picom 2>/dev/null`" != "" ]; then
+   picom -b --backend glx
+   hsetroot -solid $bgcolor
+else
+   xsetroot -solid $bgcolor
+fi
+
 do_wmaker() {
    wmclock &
    exec wmaker --no-dock --no-clip
 }
 
-do_dwm() {
-   xsetroot -solid black
+do_fvwm() {
+   exec fvwm
+}
 
+do_dwm() {
    (while true; do xsetroot -name "`tick.sh`"; sleep 60; done) &
 
    exec dwm
@@ -16,6 +26,6 @@ pi|laptop)
   do_dwm
   ;;
 *)
-  do_wmaker
+  do_fvwm
   ;;
 esac
