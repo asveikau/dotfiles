@@ -19,8 +19,14 @@ case `pwd` in
    ;;
 esac
 
-os=`uname -s|tr '[:upper:]' '[:lower:]'`
-platform=`uname -sm|tr '[:upper:]' '[:lower:]' | sed -e s/' '/_/g -e s/x86_64/amd64/`
+lowercase() {
+   env LANG=C LC_CTYPE=C tr '[:upper:]' '[:lower:]'
+}
+
+os=`uname | lowercase`
+platform=`uname -sm | lowercase | sed -e s/' '/_/g -e s/x86_64/amd64/`
+
+unset lowercase
 
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 
@@ -28,22 +34,33 @@ PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 [ -d /opt/pkg ] && PATH=/opt/pkg/bin:$PATH
 [ -d /opt/local ] && PATH=/opt/local/bin:/opt/local/sbin:$PATH
 
-export PATH=$HOME/bin/`hostname -s`:$HOME/bin:$HOME/bin/$os:$HOME/bin/$platform:$PATH
+export PATH=$HOME/bin:$HOME/bin/$os:$HOME/bin/$platform:$PATH
+
+case "$os" in
+sunos)
+   uid=`/usr/xpg4/bin/id -u`
+   export PATH=$HOME/bin/`hostname | sed 's/\..*$//'`:$PATH
+   ;;
+*)
+   uid=`id -u`
+   export PATH=$HOME/bin/`hostname -s`:$PATH
+   ;;
+esac
 
 if [ "$platform" = "darwin" ]; then
-   rm -f /var/log/asl/*`id -u`.asl 2>/dev/null
+   rm -f /var/log/asl/*$uid.asl 2>/dev/null
 fi
 
-machine_tmp=/tmp/`whoami`
+machine_tmp=/tmp/${USER-`whoami`}
 
 mkdir -p $machine_tmp
 
-if [ "`which gpg-agent`" != "" ]; then
+if [ "`which gpg-agent 2>/dev/null | grep -v ^no' '`" != "" ]; then
    # If there's an agent running and $DISPLAY changes, we'll restart it.
    # This fixes an issue where ssh-ing sets a terminal-oriented pinentry
    # which then becomes less nice when you subsequently log in via X.
    #
-   AGENT_PID="`pgrep -u $(id -u) gpg-agent`"
+   AGENT_PID="`pgrep -u $uid gpg-agent`"
    if [ "$AGENT_PID" != "" ]; then
       AGENT_DISPLAY="`gpg-connect-agent 'getinfo std_startup_env' /bye 2>/dev/null | grep -a '^D DISPLAY=' | cut -d = -f 2- | tr -d '\0'`"
 
@@ -54,15 +71,15 @@ if [ "`which gpg-agent`" != "" ]; then
       if [ "$AGENT_DISPLAY" != "$DISPLAY" ]; then
          gpgconf --kill gpg-agent
          unset AGENT_PID
-         if [ "`pgrep -u $(id -u) gpg-agent`" != "" ]; then
+         if [ "`pgrep -u $uid gpg-agent`" != "" ]; then
             sleep 0.3
-            pkill -9 -u `id -u` gpg-agent
+            pkill -9 -u $uid gpg-agent
          fi
       fi
       unset AGENT_DISPLAY
    fi
    # ssh-agent has a nice GUI on Mac, so don't use gpg-agent for SSH there.
-   if [ "`uname -s`" != Darwin ]; then
+   if [ "$os" != darwin ]; then
       SSHFLAGS=--enable-ssh-support
    fi
    if [ "$AGENT_PID" = "" ]; then
@@ -80,10 +97,11 @@ fi
 
 if [ "" = "$SSH_AUTH_SOCK" ]; then
    if [ ! -S $machine_tmp/ssh-agent-sock ] || [ ! -f $machine_tmp/ssh-agent-cmds ]; then
-      pkill -u `id -u` ssh-agent 2> /dev/null
+      pkill -u $uid ssh-agent 2> /dev/null
       ssh-agent -a $machine_tmp/ssh-agent-sock > $machine_tmp/ssh-agent-cmds
    fi
    eval `cat $machine_tmp/ssh-agent-cmds` > /dev/null
 fi
 
 unset machine_tmp
+unset uid

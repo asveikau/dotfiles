@@ -1,5 +1,5 @@
 bgcolor='#333340'
-if [ "`which picom 2>/dev/null`" != "" ]; then
+if [ "`which picom 2>/dev/null | grep -v ^no' '`" != "" ]; then
    picom -b --backend glx
    hsetroot -solid $bgcolor
 else
