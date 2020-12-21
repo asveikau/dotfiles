@@ -17,8 +17,11 @@ do_fvwm() {
 
 do_dwm() {
    (while true; do xsetroot -name "`tick.sh`"; sleep 60; done) &
-
-   exec dwm
+   tick_pid=$!
+   dwm
+   code=$?
+   kill "$tick_pid"
+   exit $code
 }
 
 case `hostname` in
