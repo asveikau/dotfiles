@@ -1,0 +1,83 @@
+Module FvwmButtons
+
+*FvwmButtonsGeometry 250x75-0-0
+*FvwmButtonsRows 1
+*FvwmButtons(Swallow XClock 'Exec xclock -digital -brief -twentyfour &')
+*FvwmButtons(1x1 Frame 0 Swallow(UseOld) "FvwmPager" "Module FvwmPager")
+
+DestroyFunc MoveClickX
+AddToFunc MoveClickX
++ M $0
++ C $1
++ D $2
+
+AddToMenu CommandMenu
++ "xterm"   exec xterm &
++ "web"     exec firefox &
++ "sublime" exec sublime &
++ ""        Nop
++ "lock"    exec xscreensaver-command -lock &
++ "restart" Restart fvwm
++ "exit"    Quit
+
+AddToMenu Window-Ops
++       "Move"          Move
++       "Resize"        Resize
++       "Raise/Lower"   RaiseLower
++       "Maximize"      Maximize
++       "Iconify"       Iconify
++       "(Un)Stick"     Stick
++       ""              Nop
++       "Delete"        Delete
++       "Close"         Close
++       "Destroy"       Destroy
+
+HilightColor white #ad527a
+Style "*" SloppyFocus
+Style "*" ClickToFocusRaises
+
+MenuStyle * Font "xft:Consolas:size=10"
+WindowFont "xft:Consolas:size=10"
+
+Mouse 0  1     A     Menu Window-Ops Close
+Mouse 0  2     A     Close
+Mouse 0  T     A     MoveClickX Move RaiseLower WindowShade
+Mouse 0  4     A     Maximize
+Mouse 0  6     A     Iconify
+
+Mouse 3  S     A     Menu Window-Ops Nop
+Mouse 3  T     A     Menu Window-Ops Nop
+
+Mouse 1  R     A     Menu CommandMenu Nop
+Mouse 3  R     A     WindowList
+
+Mouse 1  I     A     MoveClickX Move Nop Iconify
+Mouse 3  I     A     Menu Window-Ops Nop
+
+Style * Button 1, Button 2, Button 4, Button 6
+
+# Enable decorations but disable maximize for "transient" windows.
+# eg. gtk+ file dialog, pinentry-gtk passphrase UI
+#
+DestroyFunc WindowCreateHook
+AddToFunc WindowCreateHook
++ I ThisWindow (Transient) WindowStyle !NoTitle, !Button 4
+module FvwmEvent
+*FvwmEvent: Cmd
+*FvwmEvent: add_window WindowCreateHook
+Style * DecorateTransient
+
+# close button, top right
+AddButtonStyle 2 16 20x20@1 30x20@1 50x40@1 70x20@1 80x20@1 80x30@0 60x50@0 80x80@0 70x80@0 50x60@0 30x80@0 20x80@0 20x70@0 40x50@1 20x30@0 20x20@1
+# maximize button, to the left of close button
+AddButtonStyle 4 Vector 4 50x25@1 75x75@0 25x75@0 50x25@1
+# minimize button, to the left of the maximise button
+AddButtonStyle 6 Vector 4 50x75@1 25x25@1 75x25@1 50x75@0
+
+# No borders and titles for fvwm widgets
+#
+Style "Fvwm*"  NoTitle, Sticky, WindowListSkip, NoHandles, BorderWidth 0
+
+# Chrome handles its own decorations
+#
+Style "* - Chromium" NoTitle
