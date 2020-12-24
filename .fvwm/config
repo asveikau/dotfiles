@@ -5,6 +5,26 @@ Module FvwmButtons
 *FvwmButtons(Swallow XClock 'Exec xclock -digital -brief -twentyfour &')
 *FvwmButtons(1x1 Frame 0 Swallow(UseOld) "FvwmPager" "Module FvwmPager")
 
+# dwm style xterm launch
+Key Return A SM exec xterm &
+
+# alt-n goes to virtual desktop page
+Key 1 A M GotoPage 0 0
+Key 2 A M GotoPage 1 0
+Key 3 A M GotoPage 2 0
+Key 4 A M GotoPage 0 1
+Key 5 A M GotoPage 1 1
+Key 6 A M GotoPage 2 1
+Key 7 A M GotoPage 0 2
+Key 8 A M GotoPage 1 2
+Key 9 A M GotoPage 2 2
+
+# alt-arrow navigates virtual desktop pages
+Key Up A M GotoPage 0p -1p
+Key Down A M GotoPage 0p 1p
+Key Left A M GotoPage -1p 0p
+Key Right A M GotoPage 1p 0p
+
 DestroyFunc MoveClickX
 AddToFunc MoveClickX
 + M $0
