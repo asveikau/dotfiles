@@ -8,6 +8,9 @@ Module FvwmButtons
 # dwm style xterm launch
 Key Return A SM exec xterm &
 
+# dwm style close
+Key C W SM Close
+
 # alt-n goes to virtual desktop page
 Key 1 A M GotoPage 0 0
 Key 2 A M GotoPage 1 0
