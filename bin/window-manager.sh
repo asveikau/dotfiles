@@ -6,13 +6,24 @@ else
    xsetroot -solid $bgcolor
 fi
 
+lemon_wrapper() {
+   (while true; do tick.sh; sleep 60; done) | sed -l -e s/%/%%/g | \
+      while read line; do echo '%{r}'"$line"; done |
+      lemonbar -B ff000000 -F wheat -f 'xft:Consolas:size=8' "$@"
+}
+
 do_wmaker() {
    wmclock &
    exec wmaker --no-dock --no-clip
 }
 
 do_fvwm() {
-   exec fvwm
+   lemon_wrapper -n FvwmLemonBar &
+   tick_pid="$!"
+   fvwm
+   code=$?
+   kill "$tick_pid"
+   exit $code
 }
 
 do_dwm() {
