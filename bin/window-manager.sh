@@ -6,10 +6,22 @@ else
    xsetroot -solid $bgcolor
 fi
 
+wrap_exec() {
+   set -m
+   ("$@") &
+   tick_pid="$tick_pid -$!"
+   set +m
+}
+
+xcolor() {
+   xpath=`which xterm | sed -e 's|/bin/xterm$||'`
+   printf '#%.2x%.2x%.2x\n' `grep "$1"$ $xpath/lib/X11/rgb.txt | sed s/$1$//`
+}
+
 lemon_wrapper() {
    (while true; do tick.sh; sleep 60; done) | sed -l -e s/%/%%/g | \
       while read line; do echo '%{r}'"$line"; done |
-      lemonbar -B ff000000 -F wheat -f 'xft:Consolas:size=8' "$@"
+      lemonbar -F `xcolor wheat` -f 'xft:Consolas:size=8' "$@"
 }
 
 do_wmaker() {
@@ -18,20 +30,19 @@ do_wmaker() {
 }
 
 do_fvwm() {
-   lemon_wrapper -n FvwmLemonBar &
-   tick_pid="$!"
+   wrap_exec lemon_wrapper -n FvwmLemonBar
    fvwm
    code=$?
-   kill "$tick_pid"
+   kill -- $tick_pid
    exit $code
 }
 
 do_dwm() {
    (while true; do xsetroot -name "`tick.sh`"; sleep 60; done) &
-   tick_pid=$!
+   tick_pid="$tick_pid $!"
    dwm
    code=$?
-   kill "$tick_pid"
+   kill -- $tick_pid
    exit $code
 }
 
