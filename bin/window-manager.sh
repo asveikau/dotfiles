@@ -1,5 +1,9 @@
+search_program() {
+   [ "`which "$1" 2>/dev/null | grep -v ^no' '`" != "" ]
+}
+
 bgcolor='#333340'
-if [ "`which picom 2>/dev/null | grep -v ^no' '`" != "" ]; then
+if search_program picom; then
    picom -b --backend glx
    hsetroot -solid $bgcolor
 else
@@ -14,7 +18,7 @@ wrap_exec() {
 }
 
 xcolor() {
-   xpath=`which xterm | sed -e 's|/bin/xterm$||'`
+   xpath=`which xterm 2>/dev/null | sed -e 's|/bin/xterm$||'`
    printf '#%.2x%.2x%.2x\n' `grep "$1"$ $xpath/lib/X11/rgb.txt | sed s/$1$//`
 }
 

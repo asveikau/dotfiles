@@ -19,6 +19,10 @@ case `pwd` in
    ;;
 esac
 
+search_program() {
+   [ "`which "$1" 2>/dev/null | grep -v ^no' '`" != "" ]
+}
+
 lowercase() {
    env LANG=C LC_CTYPE=C tr '[:upper:]' '[:lower:]'
 }
@@ -55,7 +59,7 @@ machine_tmp=/tmp/${USER-`whoami`}
 
 mkdir -p $machine_tmp
 
-if [ "`which gpg-agent 2>/dev/null | grep -v ^no' '`" != "" ]; then
+if search_program gpg-agent; then
    # If there's an agent running and $DISPLAY changes, we'll restart it.
    # This fixes an issue where ssh-ing sets a terminal-oriented pinentry
    # which then becomes less nice when you subsequently log in via X.
@@ -105,3 +109,4 @@ fi
 
 unset machine_tmp
 unset uid
+unset search_program
