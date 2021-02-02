@@ -107,6 +107,12 @@ if [ "" = "$SSH_AUTH_SOCK" ]; then
    eval `cat $machine_tmp/ssh-agent-cmds` > /dev/null
 fi
 
+if ! search_program sudo && search_program doas; then
+   alias sudo=doas
+elif ! search_program doas && search_program sudo; then
+   alias doas=sudo
+fi
+
 unset machine_tmp
 unset uid
 unset search_program
