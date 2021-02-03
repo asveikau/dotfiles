@@ -115,4 +115,6 @@ fi
 
 unset machine_tmp
 unset uid
+unset os
+unset platform
 unset search_program
