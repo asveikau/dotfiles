@@ -1,0 +1,17 @@
+#!/bin/sh
+op="$1"
+shift
+
+service_rcd() {
+   /etc/rc.d/"$1" "$2"
+}
+
+if [ "x`which service 2>/dev/null|sed s/^no.*//`" = "x" ]; then
+   service=service_rcd
+else
+   service=service
+fi
+
+for i in "$@"; do
+   $service "$i" $op
+done

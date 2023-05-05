@@ -1,0 +1,6 @@
+#!/bin/sh
+op="$1"
+shift
+for i in "$@"; do
+   service "$i" $op
+done
