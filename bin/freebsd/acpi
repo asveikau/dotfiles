@@ -18,5 +18,5 @@ if [ `get_field hw.acpi.acline` = 0 ]; then
         `get_field hw.acpi.battery.life`%, \
         `format_time $total_minutes` remaining 
 else
-   echo Powered on.
+   echo Powered on.  `get_field hw.acpi.battery.life`%
 fi

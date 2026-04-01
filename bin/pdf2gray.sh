@@ -1,0 +1,11 @@
+#!/bin/sh
+
+exec gs \
+ -sOutputFile="$2" \
+ -sDEVICE=pdfwrite \
+ -sColorConversionStrategy=Gray \
+ -dProcessColorModel=/DeviceGray \
+ -dCompatibilityLevel=1.4 \
+ -dNOPAUSE \
+ -dBATCH \
+ "$1"
