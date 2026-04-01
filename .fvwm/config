@@ -1,8 +1,9 @@
 Module FvwmButtons
 
-*FvwmButtonsGeometry 250x75-0-0
+*FvwmButtonsGeometry 375x75-0-0
 *FvwmButtonsRows 1
 *FvwmButtons(Swallow XClock 'Exec xclock -digital -brief -twentyfour &')
+*FvwmButtons(Swallow XClock 'Exec xclock -digital -strftime %D &')
 *FvwmButtons(1x1 Frame 0 Swallow(UseOld) "FvwmPager" "Module FvwmPager")
 
 # dwm style xterm launch
